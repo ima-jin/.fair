@@ -26,4 +26,4 @@ Open PRs or Issues. Discuss first. Philosophy matters.
 
 ## License
 
-MIT with WLED Attribution Clause – Fully open, always.
+MIT with WLED Attribution Clause â€“ Fully open, always.

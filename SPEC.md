@@ -7,7 +7,7 @@
 - `context`: Domain or general context of contribution
 - `contributors`: Array of contributor objects:
   - `actor`: contributor identity (direct or reference)
-  - `role`: contributor’s role (open-ended)
+  - `role`: contributor's role (open-ended)
   - `weight`: numeric (optional) contribution weight
   - `meta`: optional metadata about the contribution
 - `created_by`: Identifier for manifest creator
