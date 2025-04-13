@@ -1,0 +1,20 @@
+﻿{
+  "id": "urn:fair:event-001",
+  "title": "Cloud9 Sunset Ritual",
+  "context": "Event",
+  "contributors": [
+    {
+      "actor": { "id": "did:ethr:0xDJWallet", "name": "Seth Schwarz" },
+      "role": "DJ performance",
+      "weight": 0.5
+    },
+    {
+      "actor": { "ref": "urn:fair:track-001" },
+      "role": "track contributor",
+      "weight": 0.5
+    }
+  ],
+  "created_by": "did:ethr:0xRyan",
+  "created_at": "2025-04-13T20:00:00Z",
+  "tags": ["music", "event"]
+}
