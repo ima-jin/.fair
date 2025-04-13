@@ -1,0 +1,20 @@
+﻿{
+  "id": "urn:fair:opensource-001",
+  "title": "ChatGPT Extension",
+  "context": "Open Source Software",
+  "contributors": [
+    {
+      "actor": { "id": "github:imajin", "name": "Ryan Vettese" },
+      "role": "maintainer",
+      "weight": 0.7
+    },
+    {
+      "actor": { "id": "github:contributor123", "name": "Contributor X" },
+      "role": "code contribution",
+      "weight": 0.3
+    }
+  ],
+  "created_by": "github:imajin",
+  "created_at": "2025-04-13T20:00:00Z",
+  "tags": ["software", "opensource"]
+}

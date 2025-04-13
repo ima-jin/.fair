@@ -1,0 +1,20 @@
+﻿{
+  "id": "urn:fair:travel-001",
+  "title": "Kensington Safari Itinerary",
+  "context": "Travel",
+  "contributors": [
+    {
+      "actor": { "id": "triparc:agent123", "name": "Travel Advisor" },
+      "role": "curation",
+      "weight": 0.5
+    },
+    {
+      "actor": { "id": "triparc:supplier456", "name": "Local Guide" },
+      "role": "on-the-ground delivery",
+      "weight": 0.5
+    }
+  ],
+  "created_by": "triparc:agent123",
+  "created_at": "2025-03-01T09:00:00Z",
+  "tags": ["travel", "kenya"]
+}
