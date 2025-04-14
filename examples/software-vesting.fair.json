@@ -1,0 +1,89 @@
+{
+  "id": "urn:fair:software-001",
+  "title": "API Platform",
+  "context": "Software Development",
+  "contributors": [
+    {
+      "actor": { "id": "github:founder", "name": "Founder" },
+      "role": "founder",
+      "temporal_splits": [
+        {
+          "version": 1,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-12-31T23:59:59Z",
+          "description": "Initial allocation with 1-year cliff",
+          "weight": 0.25
+        },
+        {
+          "version": 2,
+          "effective_from": "2026-01-01T00:00:00Z",
+          "effective_until": "2026-12-31T23:59:59Z",
+          "description": "Year 2 vesting",
+          "weight": 0.375
+        },
+        {
+          "version": 3,
+          "effective_from": "2027-01-01T00:00:00Z",
+          "effective_until": "2027-12-31T23:59:59Z",
+          "description": "Year 3 vesting",
+          "weight": 0.5
+        },
+        {
+          "version": 4,
+          "effective_from": "2028-01-01T00:00:00Z",
+          "description": "Fully vested (Year 4 and beyond)",
+          "weight": 0.625
+        }
+      ]
+    },
+    {
+      "actor": { "id": "github:investor", "name": "Seed Investor" },
+      "role": "investor",
+      "temporal_splits": [
+        {
+          "version": 1,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-12-31T23:59:59Z",
+          "description": "Initial investment share",
+          "weight": 0.75
+        },
+        {
+          "version": 2,
+          "effective_from": "2026-01-01T00:00:00Z",
+          "effective_until": "2026-12-31T23:59:59Z",
+          "description": "Year 2 allocation after founder vesting",
+          "weight": 0.625
+        },
+        {
+          "version": 3,
+          "effective_from": "2027-01-01T00:00:00Z",
+          "effective_until": "2027-12-31T23:59:59Z",
+          "description": "Year 3 allocation after founder vesting",
+          "weight": 0.5
+        },
+        {
+          "version": 4,
+          "effective_from": "2028-01-01T00:00:00Z",
+          "description": "Final allocation after founder fully vested",
+          "weight": 0.375
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "vesting_schedule": {
+      "type": "4-year with 1-year cliff",
+      "start_date": "2025-01-01T00:00:00Z",
+      "cliff_date": "2026-01-01T00:00:00Z",
+      "full_vesting_date": "2029-01-01T00:00:00Z",
+      "vesting_increments": "quarterly after cliff"
+    },
+    "total_equity": "100%",
+    "description": "Equity allocation for API Platform project with founder vesting over 4 years"
+  },
+  "created_by": "github:founder",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z",
+  "tags": ["software", "vesting", "startup", "equity"]
+}
+

@@ -1,0 +1,130 @@
+{
+  "id": "urn:fair:event-002",
+  "title": "Summer Music Festival",
+  "context": "Event",
+  "contributors": [
+    {
+      "actor": { "id": "did:ethr:0xOrganizerWallet", "name": "Event Organizer" },
+      "role": "organizer",
+      "temporal_splits": [
+        {
+          "version": 1,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-05-31T23:59:59Z",
+          "conditions": ["early-bird", "tickets-under-500"],
+          "description": "Early-bird period, initial sales (<500 tickets)",
+          "weight": 0.70
+        },
+        {
+          "version": 2,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-05-31T23:59:59Z",
+          "conditions": ["early-bird", "tickets-over-500"],
+          "description": "Early-bird period, good sales (>500 tickets)",
+          "weight": 0.65
+        },
+        {
+          "version": 3,
+          "effective_from": "2025-06-01T00:00:00Z",
+          "effective_until": "2025-08-14T23:59:59Z",
+          "conditions": ["standard-sales", "tickets-under-1000"],
+          "description": "Standard sales period, moderate sales (<1000 tickets)",
+          "weight": 0.60
+        },
+        {
+          "version": 4,
+          "effective_from": "2025-06-01T00:00:00Z",
+          "effective_until": "2025-08-14T23:59:59Z",
+          "conditions": ["standard-sales", "tickets-over-1000"],
+          "description": "Standard sales period, strong sales (>1000 tickets)",
+          "weight": 0.55
+        }
+      ]
+    },
+    {
+      "actor": { "id": "did:ethr:0xVenueWallet", "name": "Venue Owner" },
+      "role": "venue",
+      "temporal_splits": [
+        {
+          "version": 1,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-05-31T23:59:59Z",
+          "conditions": ["early-bird", "tickets-under-500"],
+          "description": "Early-bird period, initial sales (<500 tickets)",
+          "weight": 0.25
+        },
+        {
+          "version": 2,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-05-31T23:59:59Z",
+          "conditions": ["early-bird", "tickets-over-500"],
+          "description": "Early-bird period, good sales (>500 tickets)",
+          "weight": 0.30
+        },
+        {
+          "version": 3,
+          "effective_from": "2025-06-01T00:00:00Z",
+          "effective_until": "2025-08-14T23:59:59Z",
+          "conditions": ["standard-sales", "tickets-under-1000"],
+          "description": "Standard sales period, moderate sales (<1000 tickets)",
+          "weight": 0.35
+        },
+        {
+          "version": 4,
+          "effective_from": "2025-06-01T00:00:00Z",
+          "effective_until": "2025-08-14T23:59:59Z",
+          "conditions": ["standard-sales", "tickets-over-1000"],
+          "description": "Standard sales period, strong sales (>1000 tickets)",
+          "weight": 0.40
+        }
+      ]
+    },
+    {
+      "actor": { "id": "did:ethr:0xPromotionWallet", "name": "Promotion Partner" },
+      "role": "promoter",
+      "temporal_splits": [
+        {
+          "version": 1,
+          "effective_from": "2025-01-01T00:00:00Z",
+          "effective_until": "2025-05-31T23:59:59Z",
+          "conditions": ["early-bird"],
+          "description": "Early-bird promotion period",
+          "weight": 0.05
+        },
+        {
+          "version": 2,
+          "effective_from": "2025-06-01T00:00:00Z",
+          "effective_until": "2025-08-14T23:59:59Z",
+          "conditions": ["standard-sales"],
+          "description": "Standard promotion period",
+          "weight": 0.05
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "event_date": "2025-08-15T18:00:00Z",
+    "ticket_sales_periods": {
+      "early_bird": {
+        "start": "2025-01-01T00:00:00Z",
+        "end": "2025-05-31T23:59:59Z"
+      },
+      "standard": {
+        "start": "2025-06-01T00:00:00Z",
+        "end": "2025-08-14T23:59:59Z"
+      }
+    },
+    "ticket_thresholds": [
+      {"name": "tickets-under-500", "condition": "< 500"},
+      {"name": "tickets-over-500", "condition": ">= 500"},
+      {"name": "tickets-under-1000", "condition": "< 1000"},
+      {"name": "tickets-over-1000", "condition": ">= 1000"}
+    ],
+    "description": "Revenue split structure for Summer Music Festival with adjustments based on ticket sales performance"
+  },
+  "created_by": "did:ethr:0xOrganizerWallet",
+  "created_at": "2025-01-01T00:00:00Z",
+  "updated_at": "2025-01-01T00:00:00Z",
+  "tags": ["event", "festival", "ticket-sales", "revenue-sharing"]
+}
+
