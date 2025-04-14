@@ -1,0 +1,32 @@
+{
+  "name": "fair-format",
+  "version": "0.1.0",
+  "description": "Universal contribution metadata format",
+  "main": "index.js",
+  "scripts": {
+    "setup": "node setup.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ima-jin/.fair.git"
+  },
+  "keywords": [
+    "fair",
+    "contribution",
+    "attribution",
+    "metadata"
+  ],
+  "author": "Imajin",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ima-jin/.fair/issues"
+  },
+  "homepage": "https://github.com/ima-jin/.fair#readme",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "simple-git": "^3.23.0",
+    "fs-extra": "^11.2.0"
+  }
+}
+
