@@ -1,14 +1,273 @@
-﻿{
+{
   "$schema": "http://json-schema.org/draft-07/schema#",
   "type": "object",
   "required": ["id", "title", "contributors", "created_by", "created_at"],
   "properties": {
-    "id": { "type": "string" },
-    "title": { "type": "string" },
-    "context": { "type": "string" },
-    "contributors": { "type": "array" },
-    "created_by": { "type": "string" },
-    "created_at": { "type": "string", "format": "date-time" },
-    "tags": { "type": "array" }
-  }
+    "id": { 
+      "type": "string",
+      "description": "Unique identifier (URI recommended)"
+    },
+    "title": { 
+      "type": "string",
+      "description": "Short, descriptive title"
+    },
+    "context": { 
+      "type": "string",
+      "description": "Domain or general context of contribution"
+    },
+    "contributors": { 
+      "type": "array",
+      "description": "Array of contributor objects",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["actor", "role"],
+        "properties": {
+          "actor": {
+            "oneOf": [
+              {
+                "type": "object",
+                "required": ["id"],
+                "properties": {
+                  "id": { 
+                    "type": "string",
+                    "description": "Direct identifier for the contributor"
+                  },
+                  "name": { 
+                    "type": "string",
+                    "description": "Human-readable name for the contributor"
+                  }
+                }
+              },
+              {
+                "type": "object",
+                "required": ["ref"],
+                "properties": {
+                  "ref": { 
+                    "type": "string",
+                    "description": "Reference to another .fair document"
+                  }
+                }
+              }
+            ]
+          },
+          "role": { 
+            "type": "string",
+            "description": "Contributor's role (open-ended)"
+          },
+          "weight": { 
+            "type": "number", 
+            "minimum": 0, 
+            "maximum": 1,
+            "description": "Static contribution weight between 0 and 1"
+          },
+          "meta": { 
+            "type": "object",
+            "description": "Optional metadata about the contribution"
+          },
+          "temporal_splits": {
+            "type": "array",
+            "description": "Array of time-based split configurations",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "required": ["version", "effective_from", "weight"],
+              "properties": {
+                "version": { 
+                  "type": "integer", 
+                  "minimum": 1,
+                  "description": "Sequential version number for the split"
+                },
+                "effective_from": { 
+                  "type": "string", 
+                  "format": "date-time",
+                  "description": "ISO timestamp when this split becomes active"
+                },
+                "effective_until": { 
+                  "type": "string", 
+                  "format": "date-time",
+                  "description": "ISO timestamp when this split expires (optional)"
+                },
+                "conditions": { 
+                  "type": "array",
+                  "description": "Array of triggering conditions",
+                  "items": { 
+                    "type": "string",
+                    "minLength": 1
+                  }
+                },
+                "description": { 
+                  "type": "string",
+                  "description": "Human-readable explanation of the split"
+                },
+                "weight": { 
+                  "type": "number", 
+                  "minimum": 0, 
+                  "maximum": 1,
+                  "description": "Contribution weight for this split configuration"
+                }
+              },
+              "allOf": [
+                {
+                  "if": {
+                    "properties": { "effective_until": { "type": "string" } },
+                    "required": ["effective_until"]
+                  },
+                  "then": {
+                    "required": ["effective_from"],
+                    "dependencies": {
+                      "effective_until": ["effective_from"]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "dependencies": {
+          "temporal_splits": {
+            "not": {
+              "required": ["weight"]
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Additional contextual information",
+      "properties": {
+        "recoup_threshold": {
+          "type": "object",
+          "description": "Information about recoupment thresholds",
+          "required": ["amount"],
+          "properties": {
+            "amount": { 
+              "type": "number", 
+              "exclusiveMinimum": 0,
+              "description": "Amount to be recouped"
+            },
+            "currency": { 
+              "type": "string",
+              "description": "Currency for the recoup amount"
+            },
+            "description": { 
+              "type": "string",
+              "description": "Human-readable description of recoupment"
+            }
+          }
+        },
+        "default_condition": { 
+          "type": "string",
+          "description": "The condition to apply by default"
+        },
+        "vesting_schedule": {
+          "type": "object",
+          "description": "Information about vesting schedule",
+          "required": ["start_date"],
+          "properties": {
+            "type": { 
+              "type": "string",
+              "description": "Type of vesting schedule"
+            },
+            "start_date": { 
+              "type": "string", 
+              "format": "date-time",
+              "description": "When vesting period begins"
+            },
+            "cliff_date": { 
+              "type": "string", 
+              "format": "date-time",
+              "description": "When cliff period ends"
+            },
+            "full_vesting_date": { 
+              "type": "string", 
+              "format": "date-time",
+              "description": "When vesting is complete"
+            },
+            "vesting_increments": { 
+              "type": "string",
+              "description": "How frequently vesting increments occur"
+            }
+          }
+        },
+        "ticket_sales_periods": {
+          "type": "object",
+          "description": "Defined time periods for ticket sales",
+          "patternProperties": {
+            "^[a-zA-Z0-9_-]+$": {
+              "type": "object",
+              "required": ["start", "end"],
+              "properties": {
+                "start": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "Start of the sales period"
+                },
+                "end": {
+                  "type": "string",
+                  "format": "date-time",
+                  "description": "End of the sales period"
+                }
+              }
+            }
+          }
+        },
+        "ticket_thresholds": {
+          "type": "array",
+          "description": "Threshold definitions for ticket sale splits",
+          "items": {
+            "type": "object",
+            "required": ["name", "condition"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the threshold condition"
+              },
+              "condition": {
+                "type": "string",
+                "description": "Condition expression (e.g., '< 500')"
+              }
+            }
+          }
+        },
+        "event_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Date of the event"
+        },
+        "total_equity": {
+          "type": "string",
+          "description": "Total equity being allocated"
+        },
+        "description": {
+          "type": "string",
+          "description": "General description of the metadata"
+        }
+      }
+    },
+    "created_by": { 
+      "type": "string",
+      "description": "Identifier for manifest creator"
+    },
+    "created_at": { 
+      "type": "string", 
+      "format": "date-time",
+      "description": "ISO timestamp of creation"
+    },
+    "updated_at": { 
+      "type": "string", 
+      "format": "date-time",
+      "description": "ISO timestamp of last modification"
+    },
+    "tags": { 
+      "type": "array",
+      "description": "Array of relevant tags",
+      "items": { 
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
 }
