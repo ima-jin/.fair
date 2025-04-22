@@ -1,32 +1,40 @@
 {
-  "name": "fair-format",
-  "version": "0.1.0",
-  "description": "Universal contribution metadata format",
-  "main": "index.js",
+  "name": "@imajin/fair",
+  "version": "0.3.0",
+  "description": "A simple, flexible system for tracking attribution and compensation in creative works",
+  "main": "schema/fair.schema.json",
   "scripts": {
-    "setup": "node setup.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "ajv validate -s schema/fair.schema.json -d examples/*.fair.json",
+    "build": "tsc",
+    "lint": "eslint . --ext .ts",
+    "format": "prettier --write \"**/*.{ts,json,md}\""
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ima-jin/.fair.git"
+    "url": "git+https://github.com/imajin/fair.git"
   },
   "keywords": [
-    "fair",
-    "contribution",
     "attribution",
-    "metadata"
+    "compensation",
+    "royalties",
+    "metadata",
+    "schema"
   ],
   "author": "Imajin",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ima-jin/.fair/issues"
+    "url": "https://github.com/imajin/fair/issues"
   },
-  "homepage": "https://github.com/ima-jin/.fair#readme",
-  "dependencies": {
-    "chalk": "^4.1.2",
-    "simple-git": "^3.23.0",
-    "fs-extra": "^11.2.0"
+  "homepage": "https://github.com/imajin/fair#readme",
+  "devDependencies": {
+    "@types/node": "^20.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "ajv": "^8.12.0",
+    "ajv-cli": "^5.0.0",
+    "eslint": "^8.0.0",
+    "prettier": "^3.0.0",
+    "typescript": "^5.0.0"
   }
 }
 

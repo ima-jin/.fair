@@ -1,137 +1,362 @@
-# .fair Specification v0.2
+# .fair Specification v0.3
 
-## Fields
+## Overview
+
+`.fair` is a simple, flexible system for tracking attribution and compensation in creative works. It provides a standardized way to document who contributed to a creative asset and how value should be distributed.
+
+## Core Fields
 
 - `id`: Unique identifier (URI recommended)
-- `title`: Short, descriptive title
-- `context`: Domain or general context of contribution
-- `contributors`: Array of contributor objects:
-  - `actor`: contributor identity (direct or reference)
-  - `role`: contributor's role (open-ended)
-  - `weight`: numeric (optional) contribution weight
-  - `meta`: optional metadata about the contribution
-  - `temporal_splits`: array of time-based split configurations (optional)
-- `metadata`: Additional contextual information (optional)
-- `created_by`: Identifier for manifest creator
-- `created_at`: ISO timestamp
-- `updated_at`: ISO timestamp for last modification (optional)
-- `tags`: array of relevant tags
+- `type`: Type of creative asset (`set`, `track`, `performance`, `event`, `project`)
+- `title`: Human-readable title of the asset
+- `version`: Schema version (e.g. `0.3.0`)
+- `contributors`: Array of contributor objects
+- `createdAt`: ISO timestamp of creation (optional)
+- `updatedAt`: ISO timestamp of last modification (optional)
+- `context`: Optional context about how the manifest was generated
+- `metadata`: Optional additional information about the asset
 
-## Temporal Splits
+## Contributor Object
 
-Temporal splits allow for contribution weights to change over time or based on conditions:
+Each contributor object must contain:
 
-- `version`: Sequential version number for the split configuration
-- `effective_from`: ISO timestamp when this split becomes active
-- `effective_until`: ISO timestamp when this split expires (optional)
-- `conditions`: Array of triggering conditions (e.g., "pre-recoup", "post-recoup")
-- `description`: Human-readable explanation of the split
-- `weight`: The contributor's weight under this configuration
+- `id`: Unique identifier for the contributor
+- `role`: One of: `artist`, `producer`, `engineer`, `writer`, `performer`, `curator`, `other`
+- `weight`: Numeric value between 0 and 1 representing their share
+- `notes`: Optional description of their contribution
 
-### Selection Algorithm
+## Context Object
 
-When determining which split configuration applies at a specific point in time:
-
-1. Filter splits by date range (current time must be between `effective_from` and `effective_until`)
-2. Filter by applicable conditions (all conditions must be satisfied)
-3. Select the highest version number among remaining splits
-4. If no splits match, fall back to the contributor's base `weight` value
-
-### Condition Types
-
-Conditions can be categorized into several types:
-
-1. **Time-based conditions** - Determined by calendar dates
-   - Examples: `early-bird`, `standard-sales`
-
-2. **State-based conditions** - Determined by the state of a project/entity
-   - Examples: `pre-recoup`, `post-recoup`, `pre-release`, `post-release`
-
-3. **Threshold conditions** - Determined by crossing numerical thresholds
-   - Examples: `tickets-under-500`, `tickets-over-1000`
-
-4. **Role-based conditions** - Applicable to specific contributor roles
-   - Examples: `founder-vesting`, `investor-allocation`
-
-### Common Condition Patterns
-
-#### Music Industry Recoupment
-
-- `pre-recoup`: Applied before recouping specified costs
-- `post-recoup`: Applied after recouping specified costs
-
-#### Software Vesting Schedules
-
-- Time-based vesting without explicit conditions, using `effective_from` and `effective_until` dates
-- Conditions may specify cliff periods or milestones (e.g., `after-cliff`, `after-milestone-1`)
-
-#### Event Milestone Thresholds
-
-- Time period conditions: `early-bird`, `standard-sales`
-- Ticket threshold conditions: `tickets-under-500`, `tickets-over-500`
-- Combined conditions: Both time period and threshold must be met
-
-## Metadata
-
-The `metadata` object contains context-specific information that helps interpret temporal splits.
-
-### Common Metadata Patterns
-
-#### Recoupment Metadata (Music)
+The context object provides information about how the manifest was generated:
 
 ```json
-"metadata": {
-  "recoup_threshold": {
-    "amount": 5000,
-    "currency": "USD",
-    "description": "Production costs to be recouped before split changes"
-  },
-  "default_condition": "pre-recoup"
-}
-```
-
-#### Vesting Schedule Metadata (Software)
-
-```json
-"metadata": {
-  "vesting_schedule": {
-    "type": "4-year with 1-year cliff",
-    "start_date": "2025-01-01T00:00:00Z",
-    "cliff_date": "2026-01-01T00:00:00Z",
-    "full_vesting_date": "2029-01-01T00:00:00Z",
-    "vesting_increments": "quarterly after cliff"
-  },
-  "total_equity": "100%"
-}
-```
-
-#### Event Milestone Metadata (Events)
-
-```json
-"metadata": {
-  "event_date": "2025-08-15T18:00:00Z",
-  "ticket_sales_periods": {
-    "early_bird": {
-      "start": "2025-01-01T00:00:00Z",
-      "end": "2025-05-31T23:59:59Z"
-    },
-    "standard": {
-      "start": "2025-06-01T00:00:00Z",
-      "end": "2025-08-14T23:59:59Z"
+{
+  "source": "graphql" | "tinybird" | "manual",
+  "sourceId": "unique-id",
+  "derivedFrom": [
+    {
+      "type": "string",
+      "id": "string",
+      "timestamp": "ISO-8601"
     }
-  },
-  "ticket_thresholds": [
-    {"name": "tickets-under-500", "condition": "< 500"},
-    {"name": "tickets-over-500", "condition": ">= 500"}
   ]
 }
 ```
 
-## Implementation Considerations
+## Metadata Object
 
-When implementing temporal splits:
+The metadata object can contain any additional information about the asset:
 
-1. **Validation**: Ensure split weights for a given timestamp/condition sum to 1.0 (or less if intentional)
-2. **Backward Compatibility**: Implementations should support both traditional static weights and temporal splits
-3. **Condition Resolution**: Implement a clear algorithm for determining which conditions are active
-4. **Default Behavior**: Define fallback behavior when no splits match current conditions
+```json
+{
+  "tags": ["string"],
+  "description": "string",
+  "duration": number,
+  "location": "string",
+  "date": "ISO-8601",
+  "custom": {}
+}
+```
+
+## Implementation Notes
+
+1. **Validation**: 
+   - All required fields must be present
+   - Contributor weights should sum to 1.0 (or less if intentional)
+   - IDs should be unique and stable
+   - Timestamps should be in ISO-8601 format
+
+2. **Usage**:
+   - Manifests are typically stored as `.fair.json` files
+   - Can be embedded in other systems (e.g., track metadata)
+   - Used for both attribution and compensation calculations
+
+3. **Versioning**:
+   - Schema version should follow semantic versioning
+   - Breaking changes should increment major version
+   - New features should increment minor version
+   - Bug fixes should increment patch version
+
+## Example Usage
+
+### Track Attribution
+
+```json
+{
+  "id": "track-123",
+  "type": "track",
+  "title": "Summer Vibes",
+  "version": "0.3.0",
+  "contributors": [
+    {
+      "id": "artist-456",
+      "role": "artist",
+      "weight": 0.6,
+      "notes": "Lead vocals and composition"
+    },
+    {
+      "id": "producer-789",
+      "role": "producer",
+      "weight": 0.4,
+      "notes": "Production and mixing"
+    }
+  ],
+  "context": {
+    "source": "graphql",
+    "sourceId": "track-123"
+  },
+  "metadata": {
+    "duration": 180,
+    "genre": ["House", "Deep House"]
+  }
+}
+```
+
+### Event Attribution
+
+```json
+{
+  "id": "event-xyz",
+  "type": "event",
+  "title": "Summer Festival 2024",
+  "version": "0.3.0",
+  "contributors": [
+    {
+      "id": "curator-123",
+      "role": "curator",
+      "weight": 0.3,
+      "notes": "Event curation and programming"
+    },
+    {
+      "id": "artist-456",
+      "role": "artist",
+      "weight": 0.4,
+      "notes": "Headline performance"
+    },
+    {
+      "id": "artist-789",
+      "role": "artist",
+      "weight": 0.3,
+      "notes": "Support performance"
+    }
+  ],
+  "metadata": {
+    "location": "Beach Club, Ibiza",
+    "date": "2024-07-15T20:00:00Z"
+  }
+}
+```
+
+## Service Layer Integration
+
+`.fair` manifests can be integrated with various service layers and data pools to provide rich context and enable automated workflows.
+
+### Music Industry Integration
+
+#### Distribution Platforms
+
+```json
+{
+  "context": {
+    "source": "graphql",
+    "sourceId": "track-123",
+    "derivedFrom": [
+      {
+        "type": "distrokid",
+        "id": "DK-123456",
+        "timestamp": "2024-03-15T12:00:00Z"
+      },
+      {
+        "type": "spotify",
+        "id": "spotify:track:7xGfFoTpQ2E7fRF5lN10tr",
+        "timestamp": "2024-03-16T00:00:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "isrc": "US-ABC-12-34567",
+    "upc": "123456789012",
+    "releaseDate": "2024-03-15T00:00:00Z",
+    "distributor": "DistroKid",
+    "platforms": ["Spotify", "Apple Music", "Amazon Music"]
+  }
+}
+```
+
+#### Rights Management
+
+```json
+{
+  "context": {
+    "source": "manual",
+    "sourceId": "rights-789",
+    "derivedFrom": [
+      {
+        "type": "pro_ipi",
+        "id": "IPI-123456789",
+        "timestamp": "2024-02-01T00:00:00Z"
+      },
+      {
+        "type": "publisher",
+        "id": "PUB-987654321",
+        "timestamp": "2024-02-01T00:00:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "publishingRights": {
+      "territories": ["Worldwide"],
+      "duration": "Life + 70 years",
+      "splits": {
+        "writer": 0.5,
+        "publisher": 0.5
+      }
+    }
+  }
+}
+```
+
+### Data Pool Integration
+
+#### Context Data Pools
+
+`.fair` manifests can reference and be enriched by various data pools:
+
+1. **Music Metadata Pools**
+   - ISRC databases
+   - MusicBrainz
+   - Discogs
+   - Gracenote
+
+2. **Rights Management Pools**
+   - PRO databases (ASCAP, BMI, etc.)
+   - Publishing rights databases
+   - Mechanical rights databases
+
+3. **Distribution Pools**
+   - Digital service providers (DSPs)
+   - Physical distribution networks
+   - Performance rights organizations
+
+#### Integration Patterns
+
+1. **Direct Integration**
+   ```json
+   {
+     "context": {
+       "source": "musicbrainz",
+       "sourceId": "mbid-123",
+       "derivedFrom": [
+         {
+           "type": "isrc",
+           "id": "US-ABC-12-34567",
+           "timestamp": "2024-03-15T00:00:00Z"
+         }
+       ]
+     }
+   }
+   ```
+
+2. **Aggregated Integration**
+   ```json
+   {
+     "context": {
+       "source": "aggregator",
+       "sourceId": "agg-123",
+       "derivedFrom": [
+         {
+           "type": "multiple",
+           "sources": [
+             {"type": "spotify", "id": "spotify:track:7xGfFoTpQ2E7fRF5lN10tr"},
+             {"type": "apple", "id": "123456789"},
+             {"type": "amazon", "id": "B0ABCDEFGH"}
+           ]
+         }
+       ]
+     }
+   }
+   ```
+
+### Service Layer Considerations
+
+1. **Data Freshness**
+   - Timestamps should be included for all external references
+   - Consider implementing TTL (Time To Live) for cached data
+   - Provide mechanisms for data refresh and validation
+
+2. **Data Consistency**
+   - Implement versioning for external data references
+   - Handle conflicts between different data sources
+   - Provide reconciliation mechanisms
+
+3. **Security & Privacy**
+   - Consider data access controls
+   - Implement proper authentication for sensitive data
+   - Follow data protection regulations (GDPR, CCPA, etc.)
+
+4. **Performance**
+   - Implement caching strategies
+   - Consider batch processing for large datasets
+   - Optimize data fetching patterns
+
+### Example: Full Music Industry Integration
+
+```json
+{
+  "id": "track-123",
+  "type": "track",
+  "title": "Summer Vibes",
+  "version": "0.3.0",
+  "contributors": [
+    {
+      "id": "artist-456",
+      "role": "artist",
+      "weight": 0.6,
+      "notes": "Lead vocals and composition",
+      "metadata": {
+        "pro": "ASCAP",
+        "ipi": "IPI-123456789",
+        "isni": "0000000123456789"
+      }
+    },
+    {
+      "id": "producer-789",
+      "role": "producer",
+      "weight": 0.4,
+      "notes": "Production and mixing",
+      "metadata": {
+        "pro": "BMI",
+        "ipi": "IPI-987654321",
+        "isni": "0000000987654321"
+      }
+    }
+  ],
+  "context": {
+    "source": "graphql",
+    "sourceId": "track-123",
+    "derivedFrom": [
+      {
+        "type": "distrokid",
+        "id": "DK-123456",
+        "timestamp": "2024-03-15T12:00:00Z"
+      },
+      {
+        "type": "musicbrainz",
+        "id": "mbid-123",
+        "timestamp": "2024-03-14T00:00:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "isrc": "US-ABC-12-34567",
+    "upc": "123456789012",
+    "releaseDate": "2024-03-15T00:00:00Z",
+    "distributor": "DistroKid",
+    "platforms": ["Spotify", "Apple Music", "Amazon Music"],
+    "publishingRights": {
+      "territories": ["Worldwide"],
+      "duration": "Life + 70 years"
+    }
+  }
+}
+```
