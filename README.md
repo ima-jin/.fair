@@ -1,132 +1,128 @@
-﻿# `.fair` – Attribution & Compensation Manifests
+# .fair
 
-A simple, flexible system for tracking attribution and compensation in creative works. `.fair` provides a standardized way to document who contributed to a creative asset and how value should be distributed.
+**A minimal manifest for attribution, provenance, and compensation.**
 
-## 🌟 Purpose
+`.fair.json` is a plain-text metadata format that defines who contributed to a piece of work, how it should be attributed, and how value (if any) should be shared.
 
-`.fair` manifests serve as a single source of truth for:
+It lives alongside your content — in the same repo, folder, or object — and gives future humans and machines the context they need to use your work fairly.
 
-- Revenue and royalty splitting
-- Creative attribution
-- Contributor provenance
-- Transparent audits and social accountability
+---
 
-## 🔧 Field Overview
+## 🌱 Why `.fair`?
 
-Each `.fair.json` file must conform to the schema defined in `schema/fair.schema.json`.
+Modern creative work is collaborative, composable, and spread across platforms. `.fair.json` is a small, structured substrate that makes the invisible glue visible:
 
-### Required Fields
+- Who made this?
+- Who should be credited?
+- Who gets paid?
+- What license applies?
+- Where did this come from?
 
-| Field          | Type     | Description                                                  |
-| -------------- | -------- | ------------------------------------------------------------ |
-| `id`           | `string` | Unique ID for this attribution manifest                      |
-| `type`         | `string` | One of: `set`, `track`, `performance`, `event`, or `project` |
-| `title`        | `string` | Human-readable title of the asset                            |
-| `version`      | `string` | Schema version (e.g. `0.3.0`)                                |
-| `contributors` | `array`  | Array of contributor records                                 |
+This isn’t a license. It’s a statement of **intention, provenance, and value** — portable across systems.
 
-### Contributor Object
+---
 
-| Field    | Type      | Description                                                                         |
-| -------- | --------- | ----------------------------------------------------------------------------------- |
-| `id`     | `string`  | Contributor's unique ID                                                             |
-| `role`   | `string`  | One of: `artist`, `producer`, `engineer`, `writer`, `performer`, `curator`, `other` |
-| `weight` | `number`  | Value share (0-1 range, must sum to 1)                                             |
-| `notes`  | `string?` | Optional description of their contribution                                          |
-
-## 🧹 Optional Fields
-
-### `context`
-
-Use this to describe how the `.fair.json` was generated or derived.
+## ✍️ Example
 
 ```json
 {
-  "source": "graphql" | "tinybird" | "manual",
-  "sourceId": "unique-id",
-  "derivedFrom": [
+  "schema": "https://ima-jin.github.io/.fair/schema/fair.schema.json",
+  "version": "0.1.0",
+  "title": "Desert Echoes EP",
+  "license": "CC-BY-SA-4.0",
+  "contributors": [
     {
-      "type": "string",
-      "id": "string",
-      "timestamp": "ISO-8601"
+      "id": "did:example:alice",
+      "name": "Alice",
+      "role": "composer",
+      "percent": 50
+    },
+    {
+      "id": "did:example:bob",
+      "name": "Bob",
+      "role": "producer",
+      "percent": 50
     }
-  ]
+  ],
+  "source": [
+    "ar://abc123",
+    "ipfs://xyz456"
+  ],
+  "tags": ["electronic", "ambient", "2025"]
 }
 ```
 
-### `metadata`
+---
 
-Used to attach supplemental information about the asset.
+⚙️ Validation
 
-```json
-{
-  "tags": ["string"],
-  "description": "string",
-  "duration": number,
-  "location": "string",
-  "date": "ISO-8601",
-  "custom": {}
-}
-```
+This repo includes a JSON Schema to validate .fair.json files.
 
-## 🪪 Validation
+You can use ajv-cli:
 
-Use the schema validator to ensure your `.fair.json` files are valid:
+npx ajv validate -s schema/fair.schema.json -d yourfile.fair.json
 
-```bash
-npm install -g ajv-cli
-ajv validate -s schema/fair.schema.json -d your-file.fair.json
-```
 
-## 🛠️ Creating a `.fair.json`
+---
 
-1. Identify the creative asset and its contributors
-2. Determine contributor roles and weights
-3. Fill out the required fields
-4. Optionally include `context` and `metadata`
-5. Save the file using the naming convention below
+🤝 FAIR Data Alignment
 
-## 💼 Naming Convention
+This project wasn’t based on the FAIR Data Principles — but aligns with them by design:
 
-File naming format:
+Findable: Uses consistent schema and tags.
 
-```
-<type>_<context>_<primary>.fair.json
-```
+Accessible: Plain JSON, versioned, human- and machine-readable.
 
-Where:
+Interoperable: Schema-defined, supports DID, CID, IPFS, etc.
 
-- `type` = asset type (`set`, `track`, `event`, etc.)
-- `context` = event name or slug (e.g. `skyland2025`)
-- `primary` = lead contributor or focal creator
+Reusable: Explicit license, provenance, and contribution breakdown.
 
-**Example:**
 
-```
-set_skyland2025_sethschwarz.fair.json
-```
+You could say this is FAIR — with teeth.
 
-## 🤖 Integration
 
-`.fair.json` files can be integrated into various systems:
+---
 
-- Embedded in track metadata
-- Used in payout engines
-- Integrated with content management systems
-- Used for attribution displays
+📡 Use Cases
 
-## 🔗 Related Files
+Creative collectives
 
-- `schema/fair.schema.json` – JSON Schema definition
-- `SPEC.md` – Detailed specification
-- `examples/` – Example manifests
+Open-source attribution
 
-## 📦 Installation
+Dataset packaging
 
-```bash
-npm install @imajin/fair
-```
+Licensing overlays
 
-## 📝 License
+Tokenized compensation
 
-MIT License - See LICENSE file for details
+Schema-tagged LLM training data
+
+
+
+---
+
+🛠 Roadmap
+
+[ ] CLI tools for generating .fair.json
+
+[ ] .fair data unions
+
+[ ] Integration with git, Arweave, IPFS
+
+[ ] Live registry + explorer
+
+
+
+---
+
+🧬 License
+
+MIT — but the work described by .fair.json may have its own license. This format helps you declare that.
+
+
+---
+
+Follow @ima-jin for updates.
+This is early substrate. If it feels drafty — that’s the point. Join the discussion.
+
+---
