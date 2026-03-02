@@ -1,0 +1,97 @@
+{
+  "id": "query:session-abc123:query-456",
+  "type": "runtime-module",
+  "title": "User Query Attribution Chain",
+  "version": "0.2.0",
+  "contributors": [
+    {
+      "id": "memory:bob:postgres-kb",
+      "role": "operator",
+      "weight": 0.15,
+      "notes": "Memory retrieval: 5 documents, 2000 tokens"
+    },
+    {
+      "id": "embedding:carol:cohere-1",
+      "role": "operator",
+      "weight": 0.05,
+      "notes": "Embedding generation for retrieval query"
+    },
+    {
+      "id": "inference:alice:gpt4",
+      "role": "operator",
+      "weight": 0.50,
+      "notes": "Inference: 1500 tokens generated"
+    },
+    {
+      "id": "mjn:protocol",
+      "role": "protocol",
+      "weight": 0.30,
+      "notes": "Protocol fee: routing, orchestration, trust graph"
+    }
+  ],
+  "pricing": {
+    "model": "metered",
+    "unit": "query",
+    "rate": 0.08,
+    "currency": "USD"
+  },
+  "context": {
+    "source": "runtime",
+    "derivedFrom": [
+      {
+        "type": "memory-retrieval",
+        "id": "memory:bob:postgres-kb:retrieval-789",
+        "timestamp": "2026-03-02T14:30:00.123Z",
+        "metadata": {
+          "documentsRetrieved": 5,
+          "tokensRetrieved": 2000,
+          "latencyMs": 35
+        }
+      },
+      {
+        "type": "embedding",
+        "id": "embedding:carol:cohere-1:embed-456",
+        "timestamp": "2026-03-02T14:30:00.089Z",
+        "metadata": {
+          "dimensions": 1536,
+          "latencyMs": 15
+        }
+      },
+      {
+        "type": "inference",
+        "id": "inference:alice:gpt4:completion-789",
+        "timestamp": "2026-03-02T14:30:01.456Z",
+        "metadata": {
+          "tokensGenerated": 1500,
+          "latencyMs": 1350
+        }
+      }
+    ]
+  },
+  "metadata": {
+    "queryId": "query-456",
+    "sessionId": "session-abc123",
+    "userId": "did:imajin:user-dave",
+    "queryText": "[REDACTED FOR PRIVACY]",
+    "responseQuality": {
+      "userRating": 5,
+      "acceptedResponse": true
+    },
+    "performance": {
+      "totalLatencyMs": 1420,
+      "tokensConsumed": 1500,
+      "tokensRetrieved": 2000,
+      "documentsRetrieved": 5
+    },
+    "settlement": {
+      "method": "stripe",
+      "status": "pending",
+      "splits": {
+        "memory:bob:postgres-kb": 0.012,
+        "embedding:carol:cohere-1": 0.004,
+        "inference:alice:gpt4": 0.040,
+        "mjn:protocol": 0.024
+      }
+    }
+  }
+}

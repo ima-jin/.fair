@@ -1,0 +1,75 @@
+{
+  "id": "memory:bob:postgres-knowledge-base",
+  "type": "runtime-module",
+  "title": "Bob's Knowledge Base (PostgreSQL + pgvector)",
+  "version": "0.2.0",
+  "capabilities": [
+    "vector-search",
+    "semantic-retrieval",
+    "full-text-search"
+  ],
+  "pricing": {
+    "model": "metered",
+    "unit": "query",
+    "rate": 0.01,
+    "currency": "USD"
+  },
+  "contributors": [
+    {
+      "id": "did:imajin:bob",
+      "role": "operator",
+      "weight": 0.8,
+      "notes": "Memory infrastructure and curation"
+    },
+    {
+      "id": "mjn:protocol",
+      "role": "protocol",
+      "weight": 0.2,
+      "notes": "Protocol fee"
+    }
+  ],
+  "context": {
+    "source": "manual",
+    "derivedFrom": [
+      {
+        "type": "dataset",
+        "id": "arxiv:cs.AI:2020-2025",
+        "timestamp": "2025-12-01T00:00:00Z"
+      },
+      {
+        "type": "dataset",
+        "id": "github:scientific-papers",
+        "timestamp": "2025-11-15T00:00:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "endpoint": "https://bob-memory.imajin.ai/v1",
+    "storage": {
+      "type": "postgres",
+      "size": "500GB",
+      "documents": 1200000,
+      "dimensions": 1536,
+      "embeddingModel": "text-embedding-3-small"
+    },
+    "sla": {
+      "latencyP95Ms": 50,
+      "uptime": 0.995,
+      "rateLimitRPM": 5000
+    },
+    "qualityMetrics": {
+      "benchmark": "beir-msmarco",
+      "recallAt10": 0.87,
+      "ndcgAt10": 0.82,
+      "userSatisfaction": 4.6,
+      "lastEvaluated": "2026-02-15T00:00:00Z"
+    },
+    "settlement": {
+      "method": "solana",
+      "token": "MJN",
+      "wallets": {
+        "did:imajin:bob": "BOBxyz789..."
+      }
+    }
+  }
+}

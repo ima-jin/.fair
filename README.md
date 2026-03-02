@@ -1,128 +1,192 @@
 # .fair
 
-**A minimal manifest for attribution, provenance, and compensation.**
+**Attribution and compensation manifests for creative work, code, and runtime services.**
 
-`.fair.json` is a plain-text metadata format that defines who contributed to a piece of work, how it should be attributed, and how value (if any) should be shared.
-
-It lives alongside your content — in the same repo, folder, or object — and gives future humans and machines the context they need to use your work fairly.
+`.fair` is an open attribution standard that defines who contributed to a piece of work, how it should be credited, and how value should be distributed. It's part of the [Imajin](https://imajin.ai) sovereign infrastructure ecosystem.
 
 ---
 
-## 🌱 Why `.fair`?
+## What is .fair?
 
-Modern creative work is collaborative, composable, and spread across platforms. `.fair.json` is a small, structured substrate that makes the invisible glue visible:
+`.fair.json` manifests are plain-text metadata files that provide:
 
-- Who made this?
-- Who should be credited?
-- Who gets paid?
-- What license applies?
-- Where did this come from?
+- **Attribution** — Who created this work and what roles did they play?
+- **Compensation** — How should revenue or value be split among contributors?
+- **Provenance** — Where did this work come from? What is it derived from?
+- **License** — What are the terms of use?
 
-This isn’t a license. It’s a statement of **intention, provenance, and value** — portable across systems.
+The format is designed to be:
+- **Portable** — Works across platforms, protocols, and ecosystems
+- **Composable** — Manifests can reference and build on other manifests
+- **Machine-readable** — Structured for automated processing and settlement
+- **Human-friendly** — Plain JSON that anyone can read and write
 
 ---
 
-## ✍️ Example
+## Use Cases
+
+### Creative Content (v0.1.0, April 2025)
+- Music tracks and albums
+- Collaborative creative projects
+- Open-source software
+- Datasets and research artifacts
+
+### Runtime Services (v0.2.0, March 2026)
+- AI inference endpoints
+- Memory and context modules
+- Embedding services
+- Search and retrieval systems
+
+`.fair` enables transparent attribution chains that follow value through entire computational graphs — from the original dataset creators, through model trainers, to runtime service operators.
+
+---
+
+## Quick Start
+
+### Basic Example
 
 ```json
 {
-  "schema": "https://ima-jin.github.io/.fair/schema/fair.schema.json",
-  "version": "0.1.0",
-  "title": "Desert Echoes EP",
-  "license": "CC-BY-SA-4.0",
+  "id": "project-abc123",
+  "type": "project",
+  "title": "Open Source ML Library",
+  "version": "0.2.0",
   "contributors": [
     {
-      "id": "did:example:alice",
-      "name": "Alice",
-      "role": "composer",
-      "percent": 50
+      "id": "did:imajin:alice",
+      "role": "engineer",
+      "weight": 0.6,
+      "notes": "Core architecture and implementation"
     },
     {
-      "id": "did:example:bob",
-      "name": "Bob",
-      "role": "producer",
-      "percent": 50
+      "id": "did:imajin:bob",
+      "role": "engineer",
+      "weight": 0.4,
+      "notes": "Documentation and testing"
     }
   ],
-  "source": [
-    "ar://abc123",
-    "ipfs://xyz456"
-  ],
-  "tags": ["electronic", "ambient", "2025"]
+  "metadata": {
+    "license": "MIT",
+    "tags": ["machine-learning", "open-source"]
+  }
 }
+```
+
+### Runtime Module Example
+
+```json
+{
+  "id": "inference-xyz789",
+  "type": "runtime-module",
+  "title": "GPT-4 Inference Service",
+  "version": "0.2.0",
+  "capabilities": ["text-generation", "chat"],
+  "pricing": {
+    "model": "metered",
+    "unit": "token",
+    "rate": 0.00003
+  },
+  "contributors": [
+    {
+      "id": "did:imajin:operator",
+      "role": "operator",
+      "weight": 0.7
+    },
+    {
+      "id": "mjn:protocol",
+      "role": "protocol",
+      "weight": 0.3
+    }
+  ]
+}
+```
+
+See [examples/](./examples/) for more examples.
+
+---
+
+## Documentation
+
+- **[Specification](./spec/SPEC.md)** — Complete schema definition and implementation guide
+- **[RFCs](./rfcs/)** — Design proposals and implementation details
+  - [RFC-01: Commit Attribution](./rfcs/RFC-01-commit-attribution.md)
+  - [RFC-02: Runtime Modules](./rfcs/RFC-02-runtime-modules.md)
+  - [RFC-03: Memory Attribution](./rfcs/RFC-03-memory-attribution.md)
+  - [RFC-04: Settlement](./rfcs/RFC-04-settlement.md)
+- **[Examples](./examples/)** — Sample manifests for different use cases
+- **[Guides](./docs/)** — Implementation guides and architecture docs
+
+---
+
+## Validation
+
+Validate your `.fair.json` files against the schema:
+
+```bash
+npx ajv-cli validate -s schema/fair.schema.json -d yourfile.fair.json
+```
+
+Or use the setup script:
+
+```bash
+node setup.js
 ```
 
 ---
 
-⚙️ Validation
+## Key Concepts
 
-This repo includes a JSON Schema to validate .fair.json files.
+### Attribution Chains
+Every `.fair` manifest can reference upstream dependencies through the `context.derivedFrom` field, creating transparent attribution chains that trace value back to original creators.
 
-You can use ajv-cli:
+### DID-Based Identity
+Contributors are identified using Decentralized Identifiers (DIDs), with native support for `did:imajin:*` identities in the Imajin ecosystem.
 
-npx ajv validate -s schema/fair.schema.json -d yourfile.fair.json
+### Flexible Settlement
+The standard supports multiple settlement mechanisms:
+- **Phase 1**: Traditional fiat payments (Stripe)
+- **Phase 2**: On-chain settlement (Solana/MJN)
+- **Phase 3**: Peer-to-peer local settlement
 
-
----
-
-🤝 FAIR Data Alignment
-
-This project wasn’t based on the FAIR Data Principles — but aligns with them by design:
-
-Findable: Uses consistent schema and tags.
-
-Accessible: Plain JSON, versioned, human- and machine-readable.
-
-Interoperable: Schema-defined, supports DID, CID, IPFS, etc.
-
-Reusable: Explicit license, provenance, and contribution breakdown.
-
-
-You could say this is FAIR — with teeth.
-
+### Trust Graph Integration
+Attribution relationships map to trust relationships in the Imajin trust graph, enabling reputation-aware routing and quality guarantees.
 
 ---
 
-📡 Use Cases
+## Version History
 
-Creative collectives
-
-Open-source attribution
-
-Dataset packaging
-
-Licensing overlays
-
-Tokenized compensation
-
-Schema-tagged LLM training data
-
-
+- **v0.3.0** (Feb 2025) — Schema refinements, temporal splits
+- **v0.2.0** (Mar 2026) — Runtime modules, RFCs, DID support, settlement abstraction
+- **v0.1.0** (Apr 2025) — Initial release for creative content attribution
 
 ---
 
-🛠 Roadmap
+## Ecosystem
 
-[ ] CLI tools for generating .fair.json
+`.fair` is part of the [Imajin](https://imajin.ai) sovereign infrastructure project:
 
-[ ] .fair data unions
-
-[ ] Integration with git, Arweave, IPFS
-
-[ ] Live registry + explorer
-
-
+- **MJN Protocol** — Reputation and trust graph
+- **Openclaw** — Local-first orchestration layer
+- **HRPOS** — Human Router Protocol for privacy-preserving attribution (patent pending #63900179)
 
 ---
 
-🧬 License
+## Contributing
 
-MIT — but the work described by .fair.json may have its own license. This format helps you declare that.
+This is an open standard. Contributions, feedback, and implementations are welcome.
 
+- **Issues**: [github.com/ima-jin/.fair/issues](https://github.com/ima-jin/.fair/issues)
+- **Discussions**: [github.com/ima-jin/.fair/discussions](https://github.com/ima-jin/.fair/discussions)
+- **RFCs**: Submit proposals as pull requests to `rfcs/`
+
+---
+
+## License
+
+MIT
+
+The `.fair` format itself is freely usable. Works described by `.fair.json` manifests may have their own licenses.
 
 ---
 
-Follow @ima-jin for updates.
-This is early substrate. If it feels drafty — that’s the point. Join the discussion.
-
----
+**[ima-jin](https://github.com/ima-jin)** • **[imajin.ai](https://imajin.ai)**

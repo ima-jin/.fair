@@ -1,0 +1,61 @@
+{
+  "id": "inference:gpt4:alice-node-7",
+  "type": "runtime-module",
+  "title": "GPT-4 Inference Node (Alice)",
+  "version": "0.2.0",
+  "capabilities": [
+    "text-generation",
+    "chat",
+    "code-completion",
+    "function-calling"
+  ],
+  "pricing": {
+    "model": "metered",
+    "unit": "token",
+    "rate": 0.00003,
+    "currency": "USD"
+  },
+  "contributors": [
+    {
+      "id": "did:imajin:alice",
+      "role": "operator",
+      "weight": 0.7,
+      "notes": "Node operator, infrastructure costs"
+    },
+    {
+      "id": "mjn:protocol",
+      "role": "protocol",
+      "weight": 0.3,
+      "notes": "MJN protocol fee for routing and trust graph"
+    }
+  ],
+  "context": {
+    "source": "manual",
+    "derivedFrom": [
+      {
+        "type": "model",
+        "id": "openai:gpt-4",
+        "timestamp": "2026-03-01T00:00:00Z"
+      }
+    ]
+  },
+  "metadata": {
+    "endpoint": "https://alice-inference.imajin.ai/v1",
+    "modelVersion": "gpt-4-0125-preview",
+    "sla": {
+      "uptime": 0.99,
+      "latencyP95Ms": 500,
+      "rateLimitRPM": 10000
+    },
+    "regions": ["us-west-2", "eu-central-1"],
+    "settlement": {
+      "method": "stripe",
+      "batchingPeriod": "weekly",
+      "minimumPayout": 10.00,
+      "currency": "USD",
+      "accounts": {
+        "did:imajin:alice": "acct_stripe_alice123"
+      }
+    }
+  }
+}
