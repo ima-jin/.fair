@@ -1,10 +1,17 @@
-# .fair Specification v0.3 (with v0.2.0 extensions)
+> **Changelog — 2026-03-23 (v0.4.0):** DFOS integration — Attribution now uses DFOS bilateral attestations (countersignatures); both parties must sign. Assets are content-addressed by CID backed by DFOS content chains. A `.fair` manifest creation is a content chain genesis event. Cross-graph deduplication operates via content hash across chains. Every marketplace transaction, tip, and enrollment produces a bilateral attestation as cryptographic proof of mutual agreement. Revocation tiers added: withdraw → soft revoke → hard revoke (via chain operations).
+
+---
+
+# .fair Specification v0.3 (with v0.2.0 and v0.4.0 extensions)
 
 ## Overview
 
 `.fair` is a simple, flexible system for tracking attribution and compensation in creative works, code, and runtime services. It provides a standardized way to document who contributed to an asset and how value should be distributed.
 
+In the JBOS architecture (see RFC-0001), `.fair` is a **kernel primitive** — part of the cryptographic layer that userspace services depend on, not a service that can be swapped out. Settlement won't process without a valid, countersigned `.fair` manifest. Attribution chains are anchored to content chains on the DFOS substrate. The kernel doesn't care which services exist above it, but it enforces `.fair` at the boundary: no manifest, no settlement.
+
 **Version History:**
+- **v0.4.0** (March 2026) — DFOS integration: bilateral attestations, CID-backed asset identity, content chain genesis, cross-graph dedup, revocation tiers
 - **v0.3.0** (February 2025) — Schema refinements, temporal splits
 - **v0.2.0** (March 2026) — Runtime modules, DID-based identity, settlement abstraction, trust graph integration
 - **v0.1.0** (April 2025) — Initial release for creative content
@@ -645,6 +652,125 @@ The following areas require further research and specification:
    - Handling of network partitions or extended offline periods
 
 These gaps are explicitly acknowledged. Contributions and research proposals welcome.
+
+---
+
+## v0.4.0: DFOS Integration
+
+Imajin has integrated the DFOS protocol throughout its stack. The following sections describe how this changes core `.fair` semantics. All changes are additive — prior `.fair` manifests remain valid.
+
+### Bilateral Attestations (Countersignatures)
+
+Prior to v0.4.0, a `.fair` manifest was a single-signature document: the creator signed and the manifest was authoritative. Under DFOS integration, attribution uses **bilateral attestations** — both the issuer and the subject countersign.
+
+This means: when a contributor is listed in a `.fair` manifest, their inclusion is not just declared by the manifest author — it is *attested* by both parties. Neither party can unilaterally assert the other's contribution or deny their own.
+
+**Bilateral attestation structure:**
+
+```json
+{
+  "attestation": {
+    "issuer": "did:dfos:<creator-chain-id>",
+    "subject": "did:dfos:<contributor-chain-id>",
+    "role": "artist",
+    "share": 0.4,
+    "issuerSignature": "<ed25519-sig-by-creator>",
+    "subjectSignature": "<ed25519-sig-by-contributor>",
+    "timestamp": "2026-03-23T00:00:00Z"
+  }
+}
+```
+
+**Settlement layer behavior:** The settlement layer treats countersigned attestations as the authoritative record. An uncountersigned attribution share is pending — it does not route payments until the subject countersigns. This prevents unilateral attribution claims from triggering payouts.
+
+---
+
+### CID-Backed Asset Identity and Content Chains
+
+Assets in v0.4.0+ are identified by **Content Identifiers (CIDs)** — cryptographic hashes of the asset content — backed by DFOS content chains.
+
+**A `.fair` manifest creation is a content chain genesis event.** When a creator publishes a `.fair` manifest, they are initiating a DFOS content chain: an append-only chain of signed operations anchored to the asset's CID. The genesis block contains the initial attribution manifest. Subsequent operations (amendments, licensing events, sampling declarations) append to the chain.
+
+```json
+{
+  "id": "cid:bafybeig...",
+  "type": "track",
+  "contentChain": {
+    "genesisBlock": "bafybeig...",
+    "chainId": "dfos:chain:abc123",
+    "operator": "did:dfos:relay-imajin"
+  },
+  "contributors": [...]
+}
+```
+
+**Properties:**
+- The CID is stable: it is derived from content, not from a platform-issued ID
+- The content chain records the full history of attribution amendments
+- Any node holding the content can verify the manifest against the CID
+- Transferring content between nodes transfers the chain, not a database record
+
+---
+
+### Cross-Graph Deduplication
+
+Because asset identity is content-addressed by CID, the same asset appearing on multiple DFOS chains is detectable without coordination.
+
+**Cross-graph dedup rule:** If two DFOS chains contain the same content hash, they reference the same asset. Attribution from both chains is merged and deduplicated at query time. This enables:
+
+- **Discovery:** A creator publishes on one node; a downstream node using the same content discovers the original attribution chain automatically
+- **Conflict detection:** If two chains carry different attribution for the same CID, this is a detectable conflict, surfaced to the involved parties for resolution
+- **Attribution inheritance:** When content is remixed, the derived work's `.fair` manifest references the source CID, and the original attribution chain is transitively resolved
+
+---
+
+### Transaction Attestations
+
+Every transactional event in v0.4.0+ produces a **bilateral attestation** as a cryptographic proof that both parties agreed:
+
+| Transaction Type | Bilateral Attestation Produced |
+|-----------------|-------------------------------|
+| Marketplace purchase | Buyer + seller countersignature on price and content CID |
+| Tip / gratuity | Sender + recipient countersignature on amount and context |
+| Course enrollment | Student + instructor countersignature on terms and access |
+| License grant | Licensor + licensee countersignature on scope and duration |
+| Sampling clearance | Source artist + sampling artist countersignature on terms |
+
+These attestations are stored on the relevant DFOS content chains. They are:
+- Immutable: once both parties have signed, the record cannot be altered
+- Portable: any node can verify the attestation against the public keys
+- Auditable: the full history of a content chain shows every transaction involving the asset
+
+**Settlement integration:** Settlement instructions in `.fair` manifests now reference transaction attestation IDs rather than raw payment metadata. This binds the settlement record to the proof of mutual agreement.
+
+---
+
+### Revocation Tiers
+
+v0.4.0 introduces a three-tier revocation model for attribution and licensing claims, implemented as chain operations on the DFOS content chain:
+
+| Tier | Operation | Effect | Reversible? |
+|------|-----------|--------|-------------|
+| **Withdraw** | `chain.withdraw` | Removes the claim from active routing. Settlement pauses. Historical record preserved. | Yes — re-publication restores |
+| **Soft Revoke** | `chain.revoke.soft` | Marks the claim as revoked. Downstream nodes receive revocation signal. Settlement stops. | Yes — requires counterparty consent |
+| **Hard Revoke** | `chain.revoke.hard` | Permanently invalidates the claim. Burned into the chain as an immutable termination event. | No |
+
+**Revocation propagation:** Revocation signals propagate through DFOS relay nodes. Nodes caching attribution data MUST honor revocation signals within their stated freshness window. Hard revocations MUST be honored immediately upon receipt.
+
+**Partial revocation:** A creator may revoke a specific licensing term (e.g., revoke training rights) without revoking the full manifest. The content chain records which terms are active and which have been revoked.
+
+```json
+{
+  "revocation": {
+    "manifestCID": "bafybeig...",
+    "tier": "soft",
+    "revokedTerms": ["train"],
+    "reason": "Training consent withdrawn pending updated terms",
+    "signature": "<ed25519-sig>",
+    "timestamp": "2026-03-23T00:00:00Z"
+  }
+}
+```
 
 ---
 
