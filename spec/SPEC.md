@@ -12,9 +12,9 @@ In the JBOS architecture (see RFC-0001), `.fair` is a **kernel primitive** — p
 
 **Version History:**
 - **v0.4.0** (March 2026) — DFOS integration: bilateral attestations, CID-backed asset identity, content chain genesis, cross-graph dedup, revocation tiers
-- **v0.3.0** (March 2026) — Schema refinements, temporal splits
-- **v0.2.0** (February 2026) — Runtime modules, DID-based identity, settlement abstraction, trust graph integration
-- **v0.1.0** (January 2026) — Initial release for creative content
+- **v0.3.0** (April 2025) — Schema refinements, temporal splits
+- **v0.2.0** (March 2026) — Runtime modules, DID-based identity, settlement abstraction, trust graph integration
+- **v0.1.0** (April 2025) — Initial release for creative content
 
 ## Core Fields
 

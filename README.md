@@ -156,9 +156,9 @@ Attribution relationships map to trust relationships in the Imajin trust graph, 
 ## Version History
 
 - **v0.4.0** (Mar 2026) — DFOS integration: bilateral attestations, CID-backed content chains, revocation tiers
-- **v0.3.0** (Mar 2026) — Schema refinements, temporal splits
-- **v0.2.0** (Feb 2026) — Runtime modules, RFCs, DID support, settlement abstraction
-- **v0.1.0** (Jan 2026) — Initial release for creative content attribution
+- **v0.3.0** (Apr 2025) — Schema refinements, temporal splits
+- **v0.2.0** (Mar 2026) — Runtime modules, RFCs, DID support, settlement abstraction
+- **v0.1.0** (Apr 2025) — Initial release for creative content attribution
 
 ---
 
