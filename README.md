@@ -182,9 +182,9 @@ This is an open standard. Contributions, feedback, and implementations are welco
 
 ## License
 
-MIT
+CC0 1.0 Universal — public domain dedication.
 
-The `.fair` format itself is freely usable. Works described by `.fair.json` manifests may have their own licenses.
+The `.fair` format is freely usable by anyone for any purpose. Works described by `.fair.json` manifests may have their own licenses.
 
 ---
 
