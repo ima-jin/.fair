@@ -110,6 +110,8 @@ npx ajv-cli validate -s schema/fair.schema.json -d my-track.fair.json
 
 ## The bigger picture
 
-`.fair` is the attribution layer in [Imajin](https://imajin.ai)'s sovereign infrastructure stack. The ecosystem adds identity (DIDs), payments (Stripe today, Solana later), and trust graphs on top — but `.fair` itself is just JSON files that say who made what and who gets paid.
+`.fair` is the attribution layer in [Imajin](https://imajin.ai)'s sovereign infrastructure stack. The ecosystem adds identity ([DFOS](https://github.com/metalabel/dfos) chains), payments (Stripe today, MJN token later), and trust graphs on top — but `.fair` itself is just JSON files that say who made what and who gets paid.
+
+With a DID, your `.fair` manifest becomes a DFOS content chain entry — signed, federated across relay nodes, verifiable by anyone. Without a DID, it's still a valid attribution file. The spec is designed to work at both levels.
 
 You don't need Imajin to use `.fair`. You don't need a token. You don't need a DID. Start with a JSON file. Adopt more when it's useful.
