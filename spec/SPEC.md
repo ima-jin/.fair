@@ -2,7 +2,7 @@
 
 ---
 
-# .fair Specification v0.3 (with v0.2.0 and v0.4.0 extensions)
+# .fair Specification v0.4
 
 ## Overview
 
